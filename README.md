@@ -12,11 +12,11 @@ Azazel is a userland rootkit based off of the original LD_PRELOAD technique from
 * Hides remote connections
 * Hides processes
 * Hides logins
-* PCAP hooks avoids local sniffing
+* ~~PCAP hooks avoids local sniffing
 * Two accept backdoors.
- * [Crypthook](https://github.com/chokepoint/CryptHook) encrypted accept() backdoor -- Full PTY
+ * ~~[Crypthook](https://github.com/chokepoint/CryptHook) encrypted accept() backdoor -- Full PTY
  * Plaintext accept() backdoor           -- Full PTY
-* PAM backdoor for local privesc and remote entry
+* ~~PAM backdoor for local privesc and remote entry
 * Log cleanup for utmp/wtmp entries based on pty
 
 Using netcat to communicate with a remote PTY isn't the best idea. See below for a better PTY client written by [InfoDox](https://github.com/infodox), or use socat with a command similar to the following and then just paste the password into the session, otherwise socat send the first char making the passwords not match.
@@ -30,3 +30,7 @@ Using netcat to communicate with a remote PTY isn't the best idea. See below for
 
 ### Disclaimer
 The authors are in no way responsible for any illegal use of this software. It is provided purely as an educational proof of concept. We are also not responsible for any damages or mishaps that may happen in the course of using this software. Use at your own risk.
+
+
+### 我修改了什么
+修改之后不需要安装其他开发库，就可以编译
